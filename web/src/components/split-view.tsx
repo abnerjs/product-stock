@@ -46,8 +46,6 @@ export function SplitView({
 		[isControlled, onOpenChange],
 	);
 
-	const translateWithGap = gap && `-translate-x-[calc(200dvw+${gap}px)]`;
-
 	return (
 		<SplitViewContext.Provider value={{ isOpen, setIsOpen }}>
 			<div className="h-full w-full overflow-hidden">
