@@ -1,0 +1,10 @@
+{
+  "user": {
+    "name": "Exemplo de Nome",
+    "email": "exemplo@dominio.com"
+  },
+  "post": {
+    "title": "Exemplo de Título",
+    "content": "Este é um conteúdo de exemplo para os testes."
+  }
+}
