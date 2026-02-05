@@ -1,6 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { Boxes, LayoutDashboard, Package } from "lucide-react";
-import { useEffect } from "react";
 import {
 	NavigationMenu,
 	NavigationMenuItem,
@@ -38,10 +37,10 @@ export function Navbar() {
 					<Link
 						to="/"
 						className={cn(
-							"flex outline-none p-2 text-white! rounded-lg items-center space-x-2",
+							"flex outline-none p-2 text-black! rounded-lg items-center space-x-2",
 							"transition-all",
-							"hover:bg-zinc-800 ",
-							"focus:ring-2 focus:bg-zinc-800 focus:ring-zinc-500",
+							"hover:bg-zinc-200 ",
+							"focus:ring-3 focus:bg-zinc-200 focus:ring-zinc-300",
 						)}
 					>
 						<span className="font-bold hidden sm:inline-block">
@@ -68,11 +67,11 @@ export function Navbar() {
 										<Link
 											to={item.to}
 											className={cn(
-												"flex text-white! flex-row items-center gap-2",
-												isActive && "bg-zinc-800",
+												"flex flex-row items-center gap-2",
+												isActive && "bg-zinc-200 text-black!",
 											)}
 										>
-											<Icon className="size-4" />
+											<Icon className="size-4 text-black!" />
 											<span className="hidden sm:inline-block">
 												{item.label}
 											</span>

@@ -10,7 +10,7 @@ function MainLayout() {
 	return (
 		<div className="min-h-screen flex flex-col">
 			<Navbar />
-			<main className="flex-1 px-6 pb-4">
+			<main className="flex-1 pb-4">
 				<Outlet />
 			</main>
 			<Toaster />

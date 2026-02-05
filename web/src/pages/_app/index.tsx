@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_app/")({
 
 function DashboardPage() {
 	return (
-		<div className="flex flex-col gap-6">
+		<div className="flex flex-col gap-6 px-6">
 			<PageHeader
 				title="Seja bem-vindo!"
 				subtitle="Visualize os produtos que podem ser produzidos com o estoque atual."
