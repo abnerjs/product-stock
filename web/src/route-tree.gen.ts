@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './pages/__root'
 import { Route as AppLayoutRouteImport } from './pages/_app/layout'
 import { Route as AppIndexRouteImport } from './pages/_app/index'
+import { Route as AppRawIndexRouteImport } from './pages/_app/raw/index'
+import { Route as AppProductIndexRouteImport } from './pages/_app/product/index'
 
 const AppLayoutRoute = AppLayoutRouteImport.update({
   id: '/_app',
@@ -21,24 +23,40 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppLayoutRoute,
 } as any)
+const AppRawIndexRoute = AppRawIndexRouteImport.update({
+  id: '/raw/',
+  path: '/raw/',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
+const AppProductIndexRoute = AppProductIndexRouteImport.update({
+  id: '/product/',
+  path: '/product/',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/product/': typeof AppProductIndexRoute
+  '/raw/': typeof AppRawIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
+  '/product': typeof AppProductIndexRoute
+  '/raw': typeof AppRawIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppLayoutRouteWithChildren
   '/_app/': typeof AppIndexRoute
+  '/_app/product/': typeof AppProductIndexRoute
+  '/_app/raw/': typeof AppRawIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/product/' | '/raw/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/_app' | '/_app/'
+  to: '/' | '/product' | '/raw'
+  id: '__root__' | '/_app' | '/_app/' | '/_app/product/' | '/_app/raw/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -61,15 +79,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppLayoutRoute
     }
+    '/_app/raw/': {
+      id: '/_app/raw/'
+      path: '/raw'
+      fullPath: '/raw/'
+      preLoaderRoute: typeof AppRawIndexRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
+    '/_app/product/': {
+      id: '/_app/product/'
+      path: '/product'
+      fullPath: '/product/'
+      preLoaderRoute: typeof AppProductIndexRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
   }
 }
 
 interface AppLayoutRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
+  AppProductIndexRoute: typeof AppProductIndexRoute
+  AppRawIndexRoute: typeof AppRawIndexRoute
 }
 
 const AppLayoutRouteChildren: AppLayoutRouteChildren = {
   AppIndexRoute: AppIndexRoute,
+  AppProductIndexRoute: AppProductIndexRoute,
+  AppRawIndexRoute: AppRawIndexRoute,
 }
 
 const AppLayoutRouteWithChildren = AppLayoutRoute._addFileChildren(

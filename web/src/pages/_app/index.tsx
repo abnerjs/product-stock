@@ -1,16 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PageHeader } from "@/components/page-header";
 
 export const Route = createFileRoute("/_app/")({
-	component: IndexPage,
+	component: DashboardPage,
 	head: () => ({
 		meta: [
 			{
-				title: "Controle de Estoque",
+				title: "Dashboard | Controle de Estoque",
 			},
 		],
 	}),
 });
 
-function IndexPage() {
-	return <div>Hello "/"!</div>;
+function DashboardPage() {
+	return (
+		<div className="flex flex-col gap-6">
+			<PageHeader
+				title="Seja bem-vindo!"
+				subtitle="Visualize os produtos que podem ser produzidos com o estoque atual."
+			/>
+		</div>
+	);
 }
