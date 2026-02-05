@@ -31,7 +31,7 @@ export function Navbar() {
 	const location = useLocation();
 
 	return (
-		<header className="sticky flex items-center top-0 z-50 w-full p-4">
+		<header className="sticky bg-white/80 flex items-center top-0 z-50 w-full p-4">
 			<div className="flex items-center gap-4 rounded-lg w-full justify-between">
 				<div className="flex">
 					<Link
@@ -43,9 +43,7 @@ export function Navbar() {
 							"focus:ring-3 focus:bg-zinc-200 focus:ring-zinc-300",
 						)}
 					>
-						<span className="font-bold hidden sm:inline-block">
-							Controle de Estoque
-						</span>
+						<span className="font-bold inline-block">Controle de Estoque</span>
 					</Link>
 				</div>
 				<NavigationMenu>
