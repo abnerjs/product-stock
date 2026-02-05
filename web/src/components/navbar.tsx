@@ -1,5 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { Boxes, LayoutDashboard, Package } from "lucide-react";
+import { useEffect } from "react";
 import {
 	NavigationMenu,
 	NavigationMenuItem,
@@ -66,7 +67,10 @@ export function Navbar() {
 									>
 										<Link
 											to={item.to}
-											className="flex text-white! flex-row items-center gap-2"
+											className={cn(
+												"flex text-white! flex-row items-center gap-2",
+												isActive && "bg-zinc-800",
+											)}
 										>
 											<Icon className="size-4" />
 											<span className="hidden sm:inline-block">
