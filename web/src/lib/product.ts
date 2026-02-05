@@ -30,10 +30,35 @@ export const productsResponseSchema = z.object({
 	pagination: paginationSchema,
 });
 
+// Summary schemas
+export const summaryRawMaterialSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	required: z.number(),
+	inStock: z.number(),
+});
+
+export const productSummarySchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	price: z.string(),
+	maxProducible: z.number(),
+	canProduce: z.boolean(),
+	rawMaterials: z.array(summaryRawMaterialSchema),
+});
+
+export const summaryResponseSchema = z.object({
+	data: z.array(productSummarySchema),
+	pagination: paginationSchema,
+});
+
 export type ProductRawMaterial = z.infer<typeof productRawMaterialSchema>;
 export type Product = z.infer<typeof productSchema>;
 export type ProductDetail = z.infer<typeof productDetailSchema>;
 export type ProductsResponse = z.infer<typeof productsResponseSchema>;
+export type SummaryRawMaterial = z.infer<typeof summaryRawMaterialSchema>;
+export type ProductSummary = z.infer<typeof productSummarySchema>;
+export type SummaryResponse = z.infer<typeof summaryResponseSchema>;
 
 // Query params
 export interface ProductQueryParams {
@@ -42,6 +67,13 @@ export interface ProductQueryParams {
 	limit?: number;
 	orderBy?: "name" | "price";
 	order?: "asc" | "desc";
+}
+
+export interface SummaryQueryParams {
+	search?: string;
+	page?: number;
+	limit?: number;
+	filter?: "all" | "producible" | "not-producible";
 }
 
 // Input types
@@ -69,6 +101,14 @@ async function getProducts(
 	const queryString = buildQueryString({ ...params });
 	const response = await apiClient<unknown>(`/product${queryString}`);
 	return productsResponseSchema.parse(response);
+}
+
+async function getProductSummary(
+	params: SummaryQueryParams = {},
+): Promise<SummaryResponse> {
+	const queryString = buildQueryString({ ...params });
+	const response = await apiClient<unknown>(`/product/summary${queryString}`);
+	return summaryResponseSchema.parse(response);
 }
 
 async function getProductById(id: string): Promise<ProductDetail> {
@@ -136,6 +176,9 @@ export const productKeys = {
 		[...productKeys.lists(), params] as const,
 	details: () => [...productKeys.all, "detail"] as const,
 	detail: (id: string) => [...productKeys.details(), id] as const,
+	summaries: () => [...productKeys.all, "summary"] as const,
+	summary: (params: SummaryQueryParams) =>
+		[...productKeys.summaries(), params] as const,
 };
 
 // Hooks
@@ -143,6 +186,13 @@ export function useProducts(params: ProductQueryParams = {}) {
 	return useQuery({
 		queryKey: productKeys.list(params),
 		queryFn: () => getProducts(params),
+	});
+}
+
+export function useProductSummary(params: SummaryQueryParams = {}) {
+	return useQuery({
+		queryKey: productKeys.summary(params),
+		queryFn: () => getProductSummary(params),
 	});
 }
 

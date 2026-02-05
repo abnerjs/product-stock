@@ -244,7 +244,7 @@ function RawMaterialPage() {
 																	onClick={(e) => e.stopPropagation()}
 																	className="size-6!"
 																>
-																	<MoreHorizontal className="h-4 w-4 text-white!" />
+																	<MoreHorizontal className="h-4 w-4" />
 																</Button>
 															</PopoverTrigger>
 															<PopoverContent align="end" className="w-40 p-1">

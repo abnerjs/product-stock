@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createProduct } from "@/services/product/create";
 import { deleteProduct } from "@/services/product/delete";
 import { getAllProducts, getProductById } from "@/services/product/get";
+import { getProductionSummary } from "@/services/product/summary";
 import { updateProduct } from "@/services/product/update";
 
 // Zod Schemas
@@ -65,7 +66,56 @@ const queryParamsSchema = z.object({
 	order: z.enum(["asc", "desc"]).default("asc"),
 });
 
+const summaryQueryParamsSchema = z.object({
+	search: z.string().optional(),
+	page: z.coerce.number().int().min(1).default(1),
+	limit: z.coerce.number().int().min(1).max(100).default(10),
+	filter: z.enum(["all", "producible", "not-producible"]).default("all"),
+});
+
+const summaryRawMaterialSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	required: z.number().int(),
+	inStock: z.number().int(),
+});
+
+const productSummarySchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	price: z.string(),
+	maxProducible: z.number().int(),
+	canProduce: z.boolean(),
+	rawMaterials: z.array(summaryRawMaterialSchema),
+});
+
 export const productRoutes: FastifyPluginAsyncZod = async (app) => {
+	// Get production summary
+	app.get(
+		"/summary",
+		{
+			schema: {
+				querystring: summaryQueryParamsSchema,
+				response: {
+					200: z.object({
+						data: z.array(productSummarySchema),
+						pagination: paginationSchema,
+					}),
+				},
+			},
+		},
+		async (request, _reply) => {
+			const { search, page, limit, filter } = request.query;
+			const result = await getProductionSummary({
+				search,
+				page,
+				limit,
+				filter,
+			});
+			return result;
+		},
+	);
+
 	// Get all products with pagination and filtering
 	app.get(
 		"/",
