@@ -1,0 +1,30 @@
+{
+  "name": "@estoque-produto/server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backend for React app that runs a Node + Fastify + Drizzle + PostgreSQL server",
+  "keywords": [
+    "server",
+    "backend",
+    "node",
+    "fastify",
+    "drizzle",
+    "postgresql",
+    "docker",
+    "zod"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abnerjs/product-stock.git"
+  },
+  "license": "ISC",
+  "author": "abnerjs",
+  "type": "commonjs",
+  "main": "index.ts",
+  "scripts": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
