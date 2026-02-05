@@ -109,11 +109,13 @@ export async function getProductionSummary(
 		filteredSummaries = summaries.filter((s) => !s.canProduce);
 	}
 
-	// Sort: producible first, then by highest price, then alphabetically
+	// Sort: higher price first, then higher producible quantity, then alphabetically
 	filteredSummaries.sort((a, b) => {
-		// First: producible products come first
-		if (a.canProduce !== b.canProduce) {
-			return a.canProduce ? -1 : 1;
+		// First: higher price comes first
+		const priceA = Number.parseFloat(a.price);
+		const priceB = Number.parseFloat(b.price);
+		if (priceA !== priceB) {
+			return priceB - priceA;
 		}
 
 		// Second: higher maxProducible comes first
@@ -121,14 +123,7 @@ export async function getProductionSummary(
 			return b.maxProducible - a.maxProducible;
 		}
 
-		// Third: higher price comes first
-		const priceA = Number.parseFloat(a.price);
-		const priceB = Number.parseFloat(b.price);
-		if (priceA !== priceB) {
-			return priceB - priceA;
-		}
-
-		// Fourth: alphabetically by name
+		// Third: alphabetically by name
 		return a.name.localeCompare(b.name);
 	});
 
