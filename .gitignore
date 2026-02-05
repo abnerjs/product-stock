@@ -1,0 +1,12 @@
+node_modules/
+web/node_modules/
+server/node_modules/
+
+dist/
+web/dist/
+server/dist/
+
+.vscode/*
+!.vscode/settings.json
+
+server/.migrations/

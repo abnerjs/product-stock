@@ -1,0 +1,69 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:17.6
+    container_name: product-stock-db
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-docker}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-docker}
+      - POSTGRES_DB=${POSTGRES_DB:-product_stock_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - product-stock-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-docker} -d ${POSTGRES_DB:-product_stock_db}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend - Node.js + Fastify + Drizzle
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: product-stock-server
+    restart: unless-stopped
+    ports:
+      - "3333:3333"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-docker}:${POSTGRES_PASSWORD:-docker}@postgres:5433/${POSTGRES_DB:-product_stock_db}
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=3333
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - product-stock-network
+    command: sh -c "npm run db:migrate && npm run start"
+
+  # Frontend - React + Vite
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: product-stock-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:3333}
+    depends_on:
+      - server
+    networks:
+      - product-stock-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  product-stock-network:
+    driver: bridge
