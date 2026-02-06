@@ -29,7 +29,6 @@ RUN npm install --omit=dev
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/.migrations ./.migrations
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
