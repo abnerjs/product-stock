@@ -49,12 +49,12 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:3333}
     container_name: product-stock-web
     restart: unless-stopped
     ports:
       - "3000:3000"
-    environment:
-      - VITE_API_URL=${VITE_API_URL:-http://localhost:3333}
     depends_on:
       - server
     networks:
