@@ -24,7 +24,7 @@
 	"scripts": {
 		"dev": "tsx watch --env-file=.env src/api/server.ts",
 		"build": "tsc --outDir dist",
-		"start": "node dist/api/server.js",
+		"start": "node dist/src/api/server.js",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",

@@ -39,4 +39,4 @@ USER nodejs
 
 EXPOSE 3333
 
-CMD ["node", "dist/api/server.js"]
+CMD ["node", "dist/src/api/server.js"]
