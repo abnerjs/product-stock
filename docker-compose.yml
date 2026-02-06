@@ -34,7 +34,7 @@ services:
     ports:
       - "3333:3333"
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-docker}:${POSTGRES_PASSWORD:-docker}@postgres:5433/${POSTGRES_DB:-product_stock_db}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-docker}:${POSTGRES_PASSWORD:-docker}@postgres:5432/${POSTGRES_DB:-product_stock_db}
       - NODE_ENV=${NODE_ENV:-development}
       - PORT=3333
     depends_on:
@@ -42,7 +42,7 @@ services:
         condition: service_healthy
     networks:
       - product-stock-network
-    command: sh -c "npm run db:migrate && npm run start"
+    command: sh -c "npm run db:push && npm run start"
 
   # Frontend - React + Vite
   web:

@@ -12,28 +12,18 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build the application
+# Build the application (Vite outputs to dist)
 RUN npm run build
 
-# Production stage
-FROM node:22-alpine AS production
+# Production stage - serve with nginx
+FROM nginx:alpine AS production
 
-WORKDIR /app
+# Copy built files from builder
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy built files from builder (TanStack Start outputs to .output)
-COPY --from=builder /app/.output ./.output
-COPY --from=builder /app/package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production
-
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-
-USER nodejs
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 3000
 
-# TanStack Start uses .output directory
-CMD ["node", ".output/server/index.mjs"]
+CMD ["nginx", "-g", "daemon off;"]
