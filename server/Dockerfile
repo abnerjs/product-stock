@@ -12,8 +12,8 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Build TypeScript to JavaScript
-RUN npx tsc --outDir dist
+# Build TypeScript to JavaScript and resolve path aliases
+RUN npm run build
 
 # Production stage
 FROM node:22-alpine AS production
