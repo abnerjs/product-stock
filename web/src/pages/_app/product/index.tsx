@@ -15,6 +15,7 @@ import * as React from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog";
+import { ErrorState } from "@/components/error-state";
 import { PageHeader } from "@/components/page-header";
 import { SearchBar } from "@/components/search-bar";
 import {
@@ -63,6 +64,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { useDebounce } from "@/hooks";
 import {
 	type CreateProductInput,
 	type ProductDetail,
@@ -103,6 +105,19 @@ function ProductPage() {
 
 	const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
 	const [itemToDelete, setItemToDelete] = React.useState<string | null>(null);
+	const [localSearch, setLocalSearch] = React.useState(search || "");
+
+	// Debounce search para evitar muitas requisições
+	const debouncedSearch = useDebounce(localSearch, 300);
+
+	// Sincroniza URL com busca debounced
+	React.useEffect(() => {
+		if (debouncedSearch !== (search || "")) {
+			navigate({
+				search: { search: debouncedSearch || undefined, page: 1, selected },
+			});
+		}
+	}, [debouncedSearch, search, selected, navigate]);
 
 	// Query params
 	const queryParams: ProductQueryParams = {
@@ -112,7 +127,8 @@ function ProductPage() {
 	};
 
 	// Queries e mutations
-	const { data, isLoading, isError } = useProducts(queryParams);
+	const { data, isLoading, isError, refetch, isFetching } =
+		useProducts(queryParams);
 	const { data: selectedItem } = useProduct(selected || "");
 	const createMutation = useCreateProduct();
 	const updateMutation = useUpdateProduct();
@@ -120,9 +136,7 @@ function ProductPage() {
 
 	// Handlers
 	const handleSearch = (value: string) => {
-		navigate({
-			search: { search: value || undefined, page: 1, selected },
-		});
+		setLocalSearch(value);
 	};
 
 	const handlePageChange = (newPage: number) => {
@@ -188,7 +202,7 @@ function ProductPage() {
 
 						<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 							<SearchBar
-								value={search || ""}
+								value={localSearch}
 								onChange={handleSearch}
 								placeholder="Pesquisar produto..."
 							/>
@@ -201,9 +215,12 @@ function ProductPage() {
 						{isLoading ? (
 							<ProductTableSkeleton />
 						) : isError ? (
-							<div className="text-center text-destructive">
-								Erro ao carregar produtos
-							</div>
+							<ErrorState
+								title="Erro ao carregar produtos"
+								message="Não foi possível carregar a lista de produtos."
+								onRetry={() => refetch()}
+								isRetrying={isFetching}
+							/>
 						) : data?.data.length === 0 ? (
 							<Empty className="border">
 								<EmptyHeader>

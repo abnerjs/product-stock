@@ -12,6 +12,7 @@ import * as React from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog";
+import { ErrorState } from "@/components/error-state";
 import { PageHeader } from "@/components/page-header";
 import { SearchBar } from "@/components/search-bar";
 import { Badge } from "@/components/ui/badge";
@@ -45,6 +46,7 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useDebounce } from "@/hooks";
 import {
 	type ProductSummary,
 	type SummaryQueryParams,
@@ -96,6 +98,19 @@ function DashboardPage() {
 	const [expandedItems, setExpandedItems] = React.useState<Set<string>>(
 		new Set(),
 	);
+	const [localSearch, setLocalSearch] = React.useState(search || "");
+
+	// Debounce search para evitar muitas requisições
+	const debouncedSearch = useDebounce(localSearch, 300);
+
+	// Sincroniza URL com busca debounced
+	React.useEffect(() => {
+		if (debouncedSearch !== (search || "")) {
+			navigate({
+				search: { search: debouncedSearch || undefined, page: 1, filter },
+			});
+		}
+	}, [debouncedSearch, search, filter, navigate]);
 
 	// Query params
 	const queryParams: SummaryQueryParams = {
@@ -106,14 +121,13 @@ function DashboardPage() {
 	};
 
 	// Queries e mutations
-	const { data, isLoading, isError } = useProductSummary(queryParams);
+	const { data, isLoading, isError, refetch, isFetching } =
+		useProductSummary(queryParams);
 	const deleteMutation = useDeleteProduct();
 
 	// Handlers
 	const handleSearch = (value: string) => {
-		navigate({
-			search: { search: value || undefined, page: 1, filter },
-		});
+		setLocalSearch(value);
 	};
 
 	const handlePageChange = (newPage: number) => {
@@ -176,7 +190,7 @@ function DashboardPage() {
 
 				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 					<SearchBar
-						value={search || ""}
+						value={localSearch}
 						onChange={handleSearch}
 						placeholder="Pesquisar produto..."
 					/>
@@ -212,9 +226,12 @@ function DashboardPage() {
 				{isLoading ? (
 					<DashboardSkeleton />
 				) : isError ? (
-					<div className="text-center text-destructive">
-						Erro ao carregar dados
-					</div>
+					<ErrorState
+						title="Erro ao carregar dados"
+						message="Não foi possível carregar os produtos. Verifique sua conexão."
+						onRetry={() => refetch()}
+						isRetrying={isFetching}
+					/>
 				) : data?.data.length === 0 ? (
 					<Empty className="border">
 						<EmptyHeader>

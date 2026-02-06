@@ -211,6 +211,7 @@ export function useCreateProduct() {
 		mutationFn: createProduct,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+			queryClient.invalidateQueries({ queryKey: productKeys.summaries() });
 		},
 	});
 }
@@ -223,6 +224,7 @@ export function useUpdateProduct() {
 			updateProduct(id, data),
 		onSuccess: (_, variables) => {
 			queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+			queryClient.invalidateQueries({ queryKey: productKeys.summaries() });
 			queryClient.invalidateQueries({
 				queryKey: productKeys.detail(variables.id),
 			});
@@ -237,6 +239,7 @@ export function useDeleteProduct() {
 		mutationFn: deleteProduct,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+			queryClient.invalidateQueries({ queryKey: productKeys.summaries() });
 		},
 	});
 }
