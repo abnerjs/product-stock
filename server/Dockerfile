@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install all dependencies (including devDependencies for build)
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY . .
@@ -25,7 +25,7 @@ COPY package*.json ./
 COPY drizzle.config.ts ./
 
 # Install dependencies (need drizzle-kit for migrations)
-RUN npm ci
+RUN npm install --omit=dev
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
