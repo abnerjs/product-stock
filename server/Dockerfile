@@ -24,11 +24,12 @@ WORKDIR /app
 COPY package*.json ./
 COPY drizzle.config.ts ./
 
-# Install dependencies (need drizzle-kit for migrations)
-RUN npm install --omit=dev
+# Install all dependencies (need drizzle-kit for db:push)
+RUN npm install
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/db ./src/db
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
